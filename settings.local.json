@@ -4,18 +4,99 @@
       "Bash(git clone:*)",
       "Bash(find:*)",
       "Bash(cat:*)",
-      "Bash(bash:*)"
+      "Bash(bash:*)",
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nAdd Claude Code configuration with Discord webhook integration\n\n- Add comprehensive setup automation with setup.sh\n- Add CLAUDE.md documentation with setup and troubleshooting guides\n- Add discord-notify.sh hook for Discord notifications on AskUserQuestion\n- Add settings.local.json with permissions and hook configuration\n- Add known_marketplaces.json for MCP plugin marketplace\n- Add .gitignore to protect sensitive files\n- Update README.md with configuration details\n\nKey features:\n- Discord webhook integration sends notifications when Claude asks questions\n- Automated setup script for quick VM restoration\n- Detailed troubleshooting section for common issues\n- Documentation for workspace trust requirement for hooks\n\n🤖 Generated with [Claude Code]\\(https://claude.com/claude-code\\)\n\nCo-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(git push)"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "AskUserQuestion",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ~/discord-notify.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "EnterPlanMode",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ~/discord-notify.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "ExitPlanMode",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ~/discord-notify.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ~/discord-notify.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "Read",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ~/discord-notify.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ~/discord-notify.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ~/discord-notify.sh"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "TodoWrite",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ~/discord-notify.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ~/discord-notify.sh"
+          }
+        ]
+      }
     ]
   },
   "outputStyle": "default",
-  "spinnerTipsEnabled": true,
-  "hooks": {
-    "PreToolUse": [{
-      "matcher": "AskUserQuestion",
-      "hooks": [{
-        "type": "command",
-        "command": "bash ~/discord-notify.sh"
-      }]
-    }]
-  }
+  "spinnerTipsEnabled": true
 }
