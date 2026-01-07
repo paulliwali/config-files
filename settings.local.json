@@ -1,0 +1,21 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git clone:*)",
+      "Bash(find:*)",
+      "Bash(cat:*)",
+      "Bash(bash:*)"
+    ]
+  },
+  "outputStyle": "default",
+  "spinnerTipsEnabled": true,
+  "hooks": {
+    "PreToolUse": [{
+      "matcher": "AskUserQuestion",
+      "hooks": [{
+        "type": "command",
+        "command": "bash ~/discord-notify.sh"
+      }]
+    }]
+  }
+}
