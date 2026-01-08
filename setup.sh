@@ -71,6 +71,15 @@ else
     echo -e "${YELLOW}⚠ Warning: discord-notify.sh not found in repository${NC}"
 fi
 
+# Copy discord-bridge.py script
+if [ -f "$SCRIPT_DIR/discord-bridge.py" ]; then
+    cp "$SCRIPT_DIR/discord-bridge.py" ~/discord-bridge.py
+    chmod 755 ~/discord-bridge.py
+    echo -e "${GREEN}✓ Copied discord-bridge.py${NC}"
+else
+    echo -e "${YELLOW}⚠ Warning: discord-bridge.py not found in repository${NC}"
+fi
+
 echo ""
 echo -e "${GREEN}=========================================="
 echo "  Setup Complete!"
