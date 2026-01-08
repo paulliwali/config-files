@@ -49,15 +49,6 @@
         ]
       },
       {
-        "matcher": "Read",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash ~/discord-notify.sh"
-          }
-        ]
-      },
-      {
         "matcher": "Write",
         "hooks": [
           {
@@ -79,15 +70,6 @@
     "PostToolUse": [
       {
         "matcher": "TodoWrite",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash ~/discord-notify.sh"
-          }
-        ]
-      },
-      {
-        "matcher": "*",
         "hooks": [
           {
             "type": "command",
