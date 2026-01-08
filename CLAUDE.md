@@ -40,7 +40,7 @@ This repository contains configuration files for reproducing the AI development 
    ```bash
    # This file is NOT tracked in the repo for security
    # You'll need to set this up separately
-   claude-code auth login
+   claude auth login
    ```
 
 4. **Accept workspace trust** when starting Claude Code:
@@ -50,7 +50,7 @@ This repository contains configuration files for reproducing the AI development 
 
 5. Verify the setup:
    ```bash
-   claude-code --version
+   claude --version
    ```
 
 ## Manual Setup (Alternative)
@@ -145,10 +145,10 @@ The following files contain sensitive data and are explicitly excluded via `.git
 ### Claude Code Not Recognized After Setup
 ```bash
 # Check if Claude Code is in PATH
-which claude-code
+which claude
 
 # Reinstall if necessary
-npm install -g @anthropic/claude-code
+npm install -g @anthropic-ai/claude-code
 ```
 
 ### Settings Not Applied
@@ -166,7 +166,7 @@ chmod 600 ~/.claude/settings.local.json
 cat ~/.claude/plugins/known_marketplaces.json
 
 # Force marketplace refresh
-claude-code plugins refresh
+claude plugins refresh
 ```
 
 ### Hooks Not Firing
