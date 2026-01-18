@@ -80,6 +80,37 @@ else
     echo -e "${YELLOW}⚠ Warning: discord-bridge.py not found in repository${NC}"
 fi
 
+# Copy claude-session management script
+if [ -f "$SCRIPT_DIR/claude-session" ]; then
+    cp "$SCRIPT_DIR/claude-session" ~/claude-session
+    chmod 755 ~/claude-session
+    echo -e "${GREEN}✓ Copied claude-session (session manager)${NC}"
+else
+    echo -e "${YELLOW}⚠ Warning: claude-session not found in repository${NC}"
+fi
+
+# Copy get-channel-id.py utility
+if [ -f "$SCRIPT_DIR/get-channel-id.py" ]; then
+    cp "$SCRIPT_DIR/get-channel-id.py" ~/get-channel-id.py
+    chmod 755 ~/get-channel-id.py
+    echo -e "${GREEN}✓ Copied get-channel-id.py${NC}"
+else
+    echo -e "${YELLOW}⚠ Warning: get-channel-id.py not found in repository${NC}"
+fi
+
+# Copy init-all-sessions.sh auto-start script
+if [ -f "$SCRIPT_DIR/init-all-sessions.sh" ]; then
+    cp "$SCRIPT_DIR/init-all-sessions.sh" ~/init-all-sessions.sh
+    chmod 755 ~/init-all-sessions.sh
+    echo -e "${GREEN}✓ Copied init-all-sessions.sh${NC}"
+else
+    echo -e "${YELLOW}⚠ Warning: init-all-sessions.sh not found in repository${NC}"
+fi
+
+# Create .claude-sessions directory for session configs
+mkdir -p ~/.claude-sessions
+echo -e "${GREEN}✓ Created .claude-sessions directory${NC}"
+
 echo ""
 echo -e "${GREEN}=========================================="
 echo "  Setup Complete!"
@@ -94,11 +125,17 @@ echo -e "2. ${YELLOW}IMPORTANT:${NC} Accept workspace trust when you start Claud
 echo "   - This is required for hooks (Discord notifications) to work"
 echo "   - You'll be prompted on first run in your project directory"
 echo ""
-echo "3. Verify your setup:"
+echo "3. Set up environment variables for Discord integration:"
+echo -e "   ${YELLOW}export DISCORD_BOT_TOKEN=\"your-bot-token\"${NC}"
+echo -e "   ${YELLOW}export DISCORD_WEBHOOK_URL=\"your-webhook-url\"${NC}"
+echo "   (Add these to ~/.bashrc for persistence)"
+echo ""
+echo "4. (Optional) Set up multi-session management:"
+echo -e "   ${YELLOW}~/claude-session add${NC}  # Add a new repository session"
+echo -e "   ${YELLOW}~/claude-session list${NC}  # List all configured sessions"
+echo ""
+echo "5. Verify your setup:"
 echo -e "   ${YELLOW}claude --version${NC}"
 echo ""
-echo "4. (Optional) Refresh plugin marketplace:"
-echo -e "   ${YELLOW}claude plugins refresh${NC}"
-echo ""
-echo "For more information, see CLAUDE.md in this repository."
+echo "For complete documentation, see CLAUDE.md in this repository."
 echo ""

@@ -1,70 +1,13 @@
 import os
-import sys
-import argparse
 import discord
 import subprocess
 from discord.ext import commands
 
-# Try to import optional dependencies
-try:
-    import yaml
-    HAS_YAML = True
-except ImportError:
-    HAS_YAML = False
-
-try:
-    import setproctitle
-    HAS_SETPROCTITLE = True
-except ImportError:
-    HAS_SETPROCTITLE = False
-
-# Parse command line arguments
-parser = argparse.ArgumentParser(description='Discord bridge for Claude Code')
-parser.add_argument('--config', type=str, help='Path to YAML config file')
-args = parser.parse_args()
-
-# Load configuration
-if args.config:
-    # Load from YAML config file
-    if not HAS_YAML:
-        print("ERROR: pyyaml not installed. Run: pip install pyyaml")
-        sys.exit(1)
-
-    if not os.path.exists(args.config):
-        print(f"ERROR: Config file not found: {args.config}")
-        sys.exit(1)
-
-    with open(args.config, 'r') as f:
-        config = yaml.safe_load(f)
-
-    REPO_NAME = config['repo_name']
-    REPO_PATH = config['repo_path']
-    TMUX_SESSION = config['tmux_session']
-    CHANNEL_ID = int(config['discord_channel_id'])
-
-    # Get token from environment variable specified in config
-    token_env_var = config.get('discord_bot_token_env', 'DISCORD_BOT_TOKEN')
-    TOKEN = os.environ.get(token_env_var)
-
-    if not TOKEN:
-        print(f"ERROR: Environment variable {token_env_var} not set")
-        sys.exit(1)
-
-    # Change to repo directory
-    os.chdir(REPO_PATH)
-
-    # Set process title for easy identification
-    if HAS_SETPROCTITLE:
-        setproctitle.setproctitle(f"discord-bridge:{REPO_NAME}")
-
-    print(f"✅ Config loaded: {REPO_NAME} (tmux: {TMUX_SESSION}, channel: {CHANNEL_ID})")
-else:
-    # Fall back to environment variables (backward compatibility)
-    TOKEN = os.environ.get("DISCORD_BOT_TOKEN", "YOUR_DISCORD_BOT_TOKEN_HERE")
-    CHANNEL_ID = int(os.environ.get("DISCORD_CHANNEL_ID", "0"))
-    TMUX_SESSION = "claude"
-    REPO_NAME = None
-    print("⚠️  Running in legacy mode (no config file)")
+# --- CONFIGURATION ---
+# IMPORTANT: Replace these with your actual values before running
+TOKEN = os.environ.get("DISCORD_BOT_TOKEN", "YOUR_DISCORD_BOT_TOKEN_HERE")
+CHANNEL_ID = int(os.environ.get("DISCORD_CHANNEL_ID", "0"))  # Replace with your Channel ID (integer)
+TMUX_SESSION = "claude"          # The session name we will control
 
 intents = discord.Intents.default()
 intents.message_content = True

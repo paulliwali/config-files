@@ -7,7 +7,20 @@
       "Bash(bash:*)",
       "Bash(git add:*)",
       "Bash(git commit -m \"$\\(cat <<''EOF''\nAdd Claude Code configuration with Discord webhook integration\n\n- Add comprehensive setup automation with setup.sh\n- Add CLAUDE.md documentation with setup and troubleshooting guides\n- Add discord-notify.sh hook for Discord notifications on AskUserQuestion\n- Add settings.local.json with permissions and hook configuration\n- Add known_marketplaces.json for MCP plugin marketplace\n- Add .gitignore to protect sensitive files\n- Update README.md with configuration details\n\nKey features:\n- Discord webhook integration sends notifications when Claude asks questions\n- Automated setup script for quick VM restoration\n- Detailed troubleshooting section for common issues\n- Documentation for workspace trust requirement for hooks\n\n🤖 Generated with [Claude Code]\\(https://claude.com/claude-code\\)\n\nCo-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
-      "Bash(git push)"
+      "Bash(git push)",
+      "Bash(ls:*)",
+      "Bash(npm run build:*)",
+      "Bash(node --version:*)",
+      "Bash(npx astro sync)",
+      "Bash(node:*)",
+      "Bash(head:*)",
+      "Bash(git checkout:*)",
+      "Bash(gh pr create:*)",
+      "Bash(tmux list-sessions:*)",
+      "Bash(curl:*)",
+      "Bash(source /root/bot-env/bin/activate)",
+      "Bash(env)",
+      "Bash(grep:*)"
     ]
   },
   "hooks": {

@@ -1,0 +1,84 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git clone:*)",
+      "Bash(find:*)",
+      "Bash(cat:*)",
+      "Bash(bash:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push)"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "AskUserQuestion",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "CLAUDE_SESSION_NAME={{REPO_NAME}} bash ~/discord-notify.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "EnterPlanMode",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "CLAUDE_SESSION_NAME={{REPO_NAME}} bash ~/discord-notify.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "ExitPlanMode",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "CLAUDE_SESSION_NAME={{REPO_NAME}} bash ~/discord-notify.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "CLAUDE_SESSION_NAME={{REPO_NAME}} bash ~/discord-notify.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "CLAUDE_SESSION_NAME={{REPO_NAME}} bash ~/discord-notify.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "CLAUDE_SESSION_NAME={{REPO_NAME}} bash ~/discord-notify.sh"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "TodoWrite",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "CLAUDE_SESSION_NAME={{REPO_NAME}} bash ~/discord-notify.sh"
+          }
+        ]
+      }
+    ]
+  },
+  "outputStyle": "default",
+  "spinnerTipsEnabled": true
+}

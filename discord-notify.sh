@@ -4,9 +4,25 @@ WEBHOOK_URL="https://discord.com/api/webhooks/1457600927828676638/TW6o-kzY5S7eVz
 # Read hook input from stdin
 input=$(cat)
 
+# Determine session name for prefix
+if [ -n "$CLAUDE_SESSION_NAME" ]; then
+    # Use env var if set
+    SESSION_PREFIX="[$CLAUDE_SESSION_NAME] "
+else
+    # Try to detect from current directory
+    SESSION_NAME=$(basename "$PWD" | tr '[:upper:]' '[:lower:]')
+    if [ "$SESSION_NAME" != "root" ] && [ -n "$SESSION_NAME" ]; then
+        SESSION_PREFIX="[$SESSION_NAME] "
+    else
+        # No prefix (backward compatibility)
+        SESSION_PREFIX=""
+    fi
+fi
+
 # Debug logging
-echo "$(date): Hook triggered" >> /tmp/discord-notify.log
-echo "Input data: $input" >> /tmp/discord-notify.log
+LOG_FILE="/tmp/discord-notify.log"
+echo "$(date): Hook triggered (session: ${SESSION_PREFIX:-none})" >> "$LOG_FILE"
+echo "Input data: $input" >> "$LOG_FILE"
 
 # Extract relevant information based on tool type
 TOOL_NAME=$(echo "$input" | jq -r '.tool_name' 2>/dev/null)
@@ -20,13 +36,13 @@ case "$TOOL_NAME" in
     OPTIONS=$(echo "$input" | jq -r '.tool_input.questions[0].options | to_entries | map((.key + 1 | tostring) + ". " + .value.label + " - " + .value.description) | join("\n")' 2>/dev/null)
 
     if [ -n "$OPTIONS" ] && [ "$OPTIONS" != "null" ]; then
-      MESSAGE="🚨 **Claude Needs Input:**
+      MESSAGE="${SESSION_PREFIX}🚨 **Claude Needs Input:**
 $QUESTION
 
 **Options:**
 $OPTIONS"
     else
-      MESSAGE="🚨 **Claude Needs Input:**
+      MESSAGE="${SESSION_PREFIX}🚨 **Claude Needs Input:**
 $QUESTION"
     fi
     ;;
@@ -34,49 +50,49 @@ $QUESTION"
     COMMAND=$(echo "$input" | jq -r '.tool_input.command' 2>/dev/null)
     DESCRIPTION=$(echo "$input" | jq -r '.tool_input.description' 2>/dev/null)
     if [ "$HOOK_EVENT" = "PreToolUse" ]; then
-      MESSAGE="⚙️ **Running command:** $DESCRIPTION
+      MESSAGE="${SESSION_PREFIX}⚙️ **Running command:** $DESCRIPTION
 \`\`\`bash
 ${COMMAND:0:200}
 \`\`\`"
     else
-      MESSAGE="✅ **Command completed:** $DESCRIPTION"
+      MESSAGE="${SESSION_PREFIX}✅ **Command completed:** $DESCRIPTION"
     fi
     ;;
   "Read")
     FILE_PATH=$(echo "$input" | jq -r '.tool_input.file_path' 2>/dev/null)
     if [ "$HOOK_EVENT" = "PreToolUse" ]; then
-      MESSAGE="📖 **Reading file:** \`$FILE_PATH\`"
+      MESSAGE="${SESSION_PREFIX}📖 **Reading file:** \`$FILE_PATH\`"
     else
-      MESSAGE="✅ **Read completed:** \`$FILE_PATH\`"
+      MESSAGE="${SESSION_PREFIX}✅ **Read completed:** \`$FILE_PATH\`"
     fi
     ;;
   "Write")
     FILE_PATH=$(echo "$input" | jq -r '.tool_input.file_path' 2>/dev/null)
     if [ "$HOOK_EVENT" = "PreToolUse" ]; then
-      MESSAGE="✏️ **Writing file:** \`$FILE_PATH\`"
+      MESSAGE="${SESSION_PREFIX}✏️ **Writing file:** \`$FILE_PATH\`"
     else
-      MESSAGE="✅ **Write completed:** \`$FILE_PATH\`"
+      MESSAGE="${SESSION_PREFIX}✅ **Write completed:** \`$FILE_PATH\`"
     fi
     ;;
   "Edit")
     FILE_PATH=$(echo "$input" | jq -r '.tool_input.file_path' 2>/dev/null)
     if [ "$HOOK_EVENT" = "PreToolUse" ]; then
-      MESSAGE="✏️ **Editing file:** \`$FILE_PATH\`"
+      MESSAGE="${SESSION_PREFIX}✏️ **Editing file:** \`$FILE_PATH\`"
     else
-      MESSAGE="✅ **Edit completed:** \`$FILE_PATH\`"
+      MESSAGE="${SESSION_PREFIX}✅ **Edit completed:** \`$FILE_PATH\`"
     fi
     ;;
   "TodoWrite")
-    MESSAGE="📝 **Updated todo list**"
+    MESSAGE="${SESSION_PREFIX}📝 **Updated todo list**"
     ;;
   "EnterPlanMode")
-    MESSAGE="🎯 **Entering plan mode**"
+    MESSAGE="${SESSION_PREFIX}🎯 **Entering plan mode**"
     ;;
   "ExitPlanMode")
-    MESSAGE="🎯 **Exiting plan mode - ready for approval**"
+    MESSAGE="${SESSION_PREFIX}🎯 **Exiting plan mode - ready for approval**"
     ;;
   *)
-    MESSAGE="🤖 **Claude activity:** $TOOL_NAME ($HOOK_EVENT)"
+    MESSAGE="${SESSION_PREFIX}🤖 **Claude activity:** $TOOL_NAME ($HOOK_EVENT)"
     ;;
 esac
 
