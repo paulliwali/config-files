@@ -44,9 +44,22 @@ echo ""
 # Copy configuration files
 echo "Copying configuration files..."
 
+# Copy CLAUDE.md guideline files from .claude directory
+if [ -d "$SCRIPT_DIR/.claude" ]; then
+    # Copy all CLAUDE*.md files
+    for file in "$SCRIPT_DIR/.claude"/CLAUDE*.md; do
+        if [ -f "$file" ]; then
+            cp "$file" ~/.claude/
+            echo -e "${GREEN}✓ Copied $(basename "$file")${NC}"
+        fi
+    done
+else
+    echo -e "${YELLOW}⚠ Warning: .claude directory not found in repository${NC}"
+fi
+
 # Copy settings.local.json
-if [ -f "$SCRIPT_DIR/settings.local.json" ]; then
-    cp "$SCRIPT_DIR/settings.local.json" ~/.claude/settings.local.json
+if [ -f "$SCRIPT_DIR/.claude/settings.local.json" ]; then
+    cp "$SCRIPT_DIR/.claude/settings.local.json" ~/.claude/settings.local.json
     chmod 600 ~/.claude/settings.local.json
     echo -e "${GREEN}✓ Copied settings.local.json${NC}"
 else
@@ -136,6 +149,9 @@ echo -e "   ${YELLOW}~/claude-session list${NC}  # List all configured sessions"
 echo ""
 echo "5. Verify your setup:"
 echo -e "   ${YELLOW}claude --version${NC}"
+echo ""
+echo "Installed CLAUDE.md guideline files to ~/.claude/"
+echo "These will be loaded by Claude Code for consistent coding style."
 echo ""
 echo "For complete documentation, see CLAUDE.md in this repository."
 echo ""
