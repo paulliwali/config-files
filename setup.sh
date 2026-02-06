@@ -1,9 +1,10 @@
 #!/bin/bash
 
 # AI Development Environment Setup Script
-# This script restores Claude Code configuration from the config-files repository
+# Symlinks config-files repo into ~/.claude/ and ~/
+# Re-run safely at any time — existing files are backed up.
 
-set -e  # Exit on error
+set -e
 
 echo "=========================================="
 echo "  AI Development Environment Setup"
@@ -16,115 +17,97 @@ YELLOW='\033[1;33m'
 RED='\033[0;31m'
 NC='\033[0m' # No Color
 
-# Check if Claude Code is installed
-echo "Checking for Claude Code installation..."
-if ! command -v claude &> /dev/null; then
-    echo -e "${RED}ERROR: Claude Code is not installed or not in PATH${NC}"
-    echo ""
-    echo "Please install Claude Code first:"
-    echo "  npm install -g @anthropic-ai/claude-code"
-    echo ""
-    echo "Or visit: https://github.com/anthropics/claude-code"
-    exit 1
-fi
-echo -e "${GREEN}✓ Claude Code found${NC}"
-echo ""
-
 # Get the directory where this script is located
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 echo "Repository location: $SCRIPT_DIR"
 echo ""
 
-# Create Claude directory structure if it doesn't exist
-echo "Setting up Claude directory structure..."
+# --- Install / update Claude Code ---
+echo "Checking for Claude Code installation..."
+if command -v claude &> /dev/null; then
+    echo -e "${GREEN}✓ Claude Code found (auto-updates in background)${NC}"
+else
+    echo "Claude Code not found. Installing via native installer..."
+    curl -fsSL https://install.anthropic.com | sh
+    echo -e "${GREEN}✓ Claude Code installed${NC}"
+fi
+echo ""
+
+# --- Symlink helper ---
+# Usage: create_symlink <source> <target>
+# Handles:
+#   - Already correct symlink → skip
+#   - Existing file/dir → backup with timestamp, then link
+#   - Wrong symlink → replace
+#   - Nothing there → link
+create_symlink() {
+    local src="$1"
+    local target="$2"
+
+    # Already correct
+    if [ -L "$target" ] && [ "$(readlink "$target")" = "$src" ]; then
+        echo -e "${GREEN}✓ $(basename "$target") (already linked)${NC}"
+        return
+    fi
+
+    # Existing file or wrong symlink — back up
+    if [ -e "$target" ] || [ -L "$target" ]; then
+        local backup="${target}.backup.$(date +%Y%m%d%H%M%S)"
+        mv "$target" "$backup"
+        echo -e "${YELLOW}  Backed up existing $(basename "$target") → $(basename "$backup")${NC}"
+    fi
+
+    ln -s "$src" "$target"
+    echo -e "${GREEN}✓ $(basename "$target") → $src${NC}"
+}
+
+# --- Create directory structure ---
+echo "Creating directory structure..."
 mkdir -p ~/.claude/plugins
-echo -e "${GREEN}✓ Directory structure created${NC}"
-echo ""
-
-# Copy configuration files
-echo "Copying configuration files..."
-
-# Copy CLAUDE.md guideline files from .claude directory
-if [ -d "$SCRIPT_DIR/.claude" ]; then
-    # Copy all CLAUDE*.md files
-    for file in "$SCRIPT_DIR/.claude"/CLAUDE*.md; do
-        if [ -f "$file" ]; then
-            cp "$file" ~/.claude/
-            echo -e "${GREEN}✓ Copied $(basename "$file")${NC}"
-        fi
-    done
-else
-    echo -e "${YELLOW}⚠ Warning: .claude directory not found in repository${NC}"
-fi
-
-# Copy settings.local.json
-if [ -f "$SCRIPT_DIR/.claude/settings.local.json" ]; then
-    cp "$SCRIPT_DIR/.claude/settings.local.json" ~/.claude/settings.local.json
-    chmod 600 ~/.claude/settings.local.json
-    echo -e "${GREEN}✓ Copied settings.local.json${NC}"
-else
-    echo -e "${YELLOW}⚠ Warning: settings.local.json not found in repository${NC}"
-fi
-
-# Copy known_marketplaces.json
-if [ -f "$SCRIPT_DIR/known_marketplaces.json" ]; then
-    cp "$SCRIPT_DIR/known_marketplaces.json" ~/.claude/plugins/known_marketplaces.json
-    chmod 600 ~/.claude/plugins/known_marketplaces.json
-    echo -e "${GREEN}✓ Copied known_marketplaces.json${NC}"
-else
-    echo -e "${YELLOW}⚠ Warning: known_marketplaces.json not found in repository${NC}"
-fi
-
-# Copy discord-notify.sh hook script
-if [ -f "$SCRIPT_DIR/discord-notify.sh" ]; then
-    cp "$SCRIPT_DIR/discord-notify.sh" ~/discord-notify.sh
-    chmod 755 ~/discord-notify.sh
-    echo -e "${GREEN}✓ Copied discord-notify.sh (hook script)${NC}"
-else
-    echo -e "${YELLOW}⚠ Warning: discord-notify.sh not found in repository${NC}"
-fi
-
-# Copy discord-bridge.py script
-if [ -f "$SCRIPT_DIR/discord-bridge.py" ]; then
-    cp "$SCRIPT_DIR/discord-bridge.py" ~/discord-bridge.py
-    chmod 755 ~/discord-bridge.py
-    echo -e "${GREEN}✓ Copied discord-bridge.py${NC}"
-else
-    echo -e "${YELLOW}⚠ Warning: discord-bridge.py not found in repository${NC}"
-fi
-
-# Copy claude-session management script
-if [ -f "$SCRIPT_DIR/claude-session" ]; then
-    cp "$SCRIPT_DIR/claude-session" ~/claude-session
-    chmod 755 ~/claude-session
-    echo -e "${GREEN}✓ Copied claude-session (session manager)${NC}"
-else
-    echo -e "${YELLOW}⚠ Warning: claude-session not found in repository${NC}"
-fi
-
-# Copy get-channel-id.py utility
-if [ -f "$SCRIPT_DIR/get-channel-id.py" ]; then
-    cp "$SCRIPT_DIR/get-channel-id.py" ~/get-channel-id.py
-    chmod 755 ~/get-channel-id.py
-    echo -e "${GREEN}✓ Copied get-channel-id.py${NC}"
-else
-    echo -e "${YELLOW}⚠ Warning: get-channel-id.py not found in repository${NC}"
-fi
-
-# Copy init-all-sessions.sh auto-start script
-if [ -f "$SCRIPT_DIR/init-all-sessions.sh" ]; then
-    cp "$SCRIPT_DIR/init-all-sessions.sh" ~/init-all-sessions.sh
-    chmod 755 ~/init-all-sessions.sh
-    echo -e "${GREEN}✓ Copied init-all-sessions.sh${NC}"
-else
-    echo -e "${YELLOW}⚠ Warning: init-all-sessions.sh not found in repository${NC}"
-fi
-
-# Create .claude-sessions directory for session configs
 mkdir -p ~/.claude-sessions
-echo -e "${GREEN}✓ Created .claude-sessions directory${NC}"
-
+echo -e "${GREEN}✓ Directories ready${NC}"
 echo ""
+
+# --- Symlink .claude/ files ---
+echo "Linking .claude/ configuration..."
+
+# settings.json
+create_symlink "$SCRIPT_DIR/.claude/settings.json" "$HOME/.claude/settings.json"
+
+# All CLAUDE*.md files
+for file in "$SCRIPT_DIR/.claude"/CLAUDE*.md; do
+    if [ -f "$file" ]; then
+        create_symlink "$file" "$HOME/.claude/$(basename "$file")"
+    fi
+done
+echo ""
+
+# --- Symlink scripts to ~/ ---
+echo "Linking scripts to ~/..."
+
+for script in discord-notify.sh discord-bridge.py claude-session get-channel-id.py init-all-sessions.sh; do
+    if [ -f "$SCRIPT_DIR/$script" ]; then
+        create_symlink "$SCRIPT_DIR/$script" "$HOME/$script"
+    else
+        echo -e "${YELLOW}⚠ $script not found in repo${NC}"
+    fi
+done
+echo ""
+
+# --- Symlink plugin config ---
+echo "Linking plugin configuration..."
+
+if [ -f "$SCRIPT_DIR/known_marketplaces.json" ]; then
+    create_symlink "$SCRIPT_DIR/known_marketplaces.json" "$HOME/.claude/plugins/known_marketplaces.json"
+fi
+
+# Symlink custom-skills plugin directory
+if [ -d "$SCRIPT_DIR/plugins/custom-skills" ]; then
+    create_symlink "$SCRIPT_DIR/plugins/custom-skills" "$HOME/.claude/plugins/custom-skills"
+fi
+echo ""
+
+# --- Done ---
 echo -e "${GREEN}=========================================="
 echo "  Setup Complete!"
 echo "==========================================${NC}"
@@ -135,8 +118,7 @@ echo "1. Configure your Claude API key (if not already done):"
 echo -e "   ${YELLOW}claude auth login${NC}"
 echo ""
 echo -e "2. ${YELLOW}IMPORTANT:${NC} Accept workspace trust when you start Claude Code"
-echo "   - This is required for hooks (Discord notifications) to work"
-echo "   - You'll be prompted on first run in your project directory"
+echo "   - Required for hooks (Discord notifications) to work"
 echo ""
 echo "3. Set up environment variables for Discord integration:"
 echo -e "   ${YELLOW}export DISCORD_BOT_TOKEN=\"your-bot-token\"${NC}"
@@ -147,11 +129,6 @@ echo "4. (Optional) Set up multi-session management:"
 echo -e "   ${YELLOW}~/claude-session add${NC}  # Add a new repository session"
 echo -e "   ${YELLOW}~/claude-session list${NC}  # List all configured sessions"
 echo ""
-echo "5. Verify your setup:"
-echo -e "   ${YELLOW}claude --version${NC}"
-echo ""
-echo "Installed CLAUDE.md guideline files to ~/.claude/"
-echo "These will be loaded by Claude Code for consistent coding style."
-echo ""
-echo "For complete documentation, see CLAUDE.md in this repository."
+echo "All files are symlinked — edits in ~/.claude/ flow back to the repo."
+echo "Commit and push to propagate changes to other instances."
 echo ""

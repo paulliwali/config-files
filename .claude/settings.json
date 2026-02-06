@@ -1,0 +1,133 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git:*)",
+      "Bash(gh:*)",
+      "Bash(npm:*)",
+      "Bash(npx:*)",
+      "Bash(yarn:*)",
+      "Bash(pnpm:*)",
+      "Bash(node:*)",
+      "Bash(python:*)",
+      "Bash(python3:*)",
+      "Bash(pip:*)",
+      "Bash(pip3:*)",
+      "Bash(uv:*)",
+      "Bash(pytest:*)",
+      "Bash(ruff:*)",
+      "Bash(mypy:*)",
+      "Bash(black:*)",
+      "Bash(isort:*)",
+      "Bash(ls:*)",
+      "Bash(find:*)",
+      "Bash(cat:*)",
+      "Bash(head:*)",
+      "Bash(tail:*)",
+      "Bash(grep:*)",
+      "Bash(rg:*)",
+      "Bash(which:*)",
+      "Bash(env)",
+      "Bash(pwd)",
+      "Bash(echo:*)",
+      "Bash(mkdir:*)",
+      "Bash(cp:*)",
+      "Bash(mv:*)",
+      "Bash(rm:*)",
+      "Bash(touch:*)",
+      "Bash(chmod:*)",
+      "Bash(curl:*)",
+      "Bash(wget:*)",
+      "Bash(tmux:*)",
+      "Bash(docker:*)",
+      "Bash(docker-compose:*)",
+      "Bash(make:*)",
+      "Bash(cargo:*)",
+      "Bash(rustc:*)",
+      "Bash(go:*)",
+      "Bash(source:*)",
+      "Bash(bash:*)",
+      "WebSearch"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "AskUserQuestion",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ~/discord-notify.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "EnterPlanMode",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ~/discord-notify.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "ExitPlanMode",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ~/discord-notify.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ~/discord-notify.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ~/discord-notify.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ~/discord-notify.sh"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "TodoWrite",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ~/discord-notify.sh"
+          }
+        ]
+      }
+    ]
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "input=$(cat); cwd=$(echo \"$input\" | jq -r '.workspace.current_dir'); user=$(whoami); dir_path=\"${cwd/#$HOME/~}\"; IFS='/' read -ra SEGMENTS <<< \"$dir_path\"; if [ ${#SEGMENTS[@]} -gt 4 ]; then dir_display=\"…/${SEGMENTS[-3]}/${SEGMENTS[-2]}/${SEGMENTS[-1]}\"; else dir_display=\"$dir_path\"; fi; git_info=\"\"; if git -C \"$cwd\" rev-parse --git-dir > /dev/null 2>&1; then branch=$(git -C \"$cwd\" --no-optional-locks branch --show-current 2>/dev/null || git -C \"$cwd\" --no-optional-locks rev-parse --short HEAD 2>/dev/null); if [ -n \"$branch\" ]; then status_info=\"\"; if [ -n \"$(git -C \"$cwd\" --no-optional-locks status --porcelain 2>/dev/null)\" ]; then status_info=\"*\"; fi; git_info=\" $branch$status_info\"; fi; fi; lang_info=\"\"; if [ -f \"$cwd/package.json\" ] && command -v node >/dev/null 2>&1; then node_version=$(node --version 2>/dev/null | sed 's/v//'); lang_info=\"${lang_info} node:$node_version\"; fi; if [ -f \"$cwd/Cargo.toml\" ] && command -v rustc >/dev/null 2>&1; then rust_version=$(rustc --version 2>/dev/null | awk '{print $2}'); lang_info=\"${lang_info} rust:$rust_version\"; fi; if ([ -f \"$cwd/requirements.txt\" ] || [ -f \"$cwd/pyproject.toml\" ] || [ -f \"$cwd/setup.py\" ]) && command -v python3 >/dev/null 2>&1; then python_version=$(python3 --version 2>/dev/null | awk '{print $2}'); lang_info=\"${lang_info} py:$python_version\"; fi; if [ -f \"$cwd/go.mod\" ] && command -v go >/dev/null 2>&1; then go_version=$(go version 2>/dev/null | awk '{print $3}' | sed 's/go//'); lang_info=\"${lang_info} go:$go_version\"; fi; docker_info=\"\"; if ([ -f \"$cwd/Dockerfile\" ] || [ -f \"$cwd/docker-compose.yml\" ] || [ -f \"$cwd/docker-compose.yaml\" ]) && command -v docker >/dev/null 2>&1; then docker_context=$(docker context show 2>/dev/null); if [ -n \"$docker_context\" ] && [ \"$docker_context\" != \"default\" ]; then docker_info=\" docker:$docker_context\"; fi; fi; current_time=$(date +%R); output=\"\"; output=\"${output}$(printf '\\033[48;5;127m %s \\033[0m' \"$user\")\"; output=\"${output}$(printf '\\033[48;5;168m %s \\033[0m' \"$dir_display\")\"; if [ -n \"$git_info\" ]; then output=\"${output}$(printf '\\033[48;5;216m%s \\033[0m' \"$git_info\")\"; fi; if [ -n \"$lang_info\" ]; then output=\"${output}$(printf '\\033[48;5;110m%s \\033[0m' \"$lang_info\")\"; fi; if [ -n \"$docker_info\" ]; then output=\"${output}$(printf '\\033[48;5;30m%s \\033[0m' \"$docker_info\")\"; fi; output=\"${output}$(printf '\\033[48;5;24m %s \\033[0m' \"$current_time\")\"; output=\"${output} \"; echo -n \"$output\""
+  },
+  "enabledPlugins": {
+    "context7@claude-plugins-official": true,
+    "frontend-design@claude-plugins-official": true,
+    "playwright@claude-plugins-official": true
+  },
+  "outputStyle": "default",
+  "spinnerTipsEnabled": true,
+  "alwaysThinkingEnabled": true
+}

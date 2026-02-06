@@ -26,8 +26,14 @@ Core preferences for all sessions. Load topic files as needed.
 - When creating a new project or initializing a project's `CLAUDE.md`, also create a `PLAN.md` file
 - Update these files as work progresses to maintain context across sessions
 
-### Config Sync
-- When making improvements to `~/.claude/` settings, ask if the user wants to sync changes to `config-files/.claude/` so other instances can receive the updates
+### Config Evolution
+This repo is symlinked into `~/.claude/` — edits propagate automatically.
+When you notice opportunities to improve the dev environment, proactively suggest:
+- **CLAUDE.md / topic files**: Update when users express coding preferences or conventions
+- **settings.json**: Update for permission or hook changes
+- **custom-skills plugin**: Add commands to `plugins/custom-skills/commands/` or skills to `plugins/custom-skills/skills/` when a reusable workflow emerges
+- Always confirm with user before editing config-files
+- Remind user to commit + push so other instances receive the updates
 
 ## Topic Files
 Load these into context when relevant:

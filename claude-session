@@ -8,7 +8,6 @@ set -e
 CONFIG_DIR="/root/.claude-sessions"
 BOT_SCRIPT="/root/discord-bridge.py"
 PYTHON_BIN="/root/bot-env/bin/python3"
-TEMPLATE_DIR="/root/config-files"
 
 # Colors for output
 GREEN='\033[0;32m'
@@ -272,16 +271,83 @@ cmd_init_repo() {
     local claude_dir="$repo_path/.claude"
     mkdir -p "$claude_dir"
 
-    local template="$TEMPLATE_DIR/settings.local.template.json"
-    if [ -f "$template" ]; then
-        echo "Copying settings template..."
-        local settings="$claude_dir/settings.local.json"
-        sed "s/{{REPO_NAME}}/$repo_name/g" "$template" > "$settings"
-        chmod 600 "$settings"
-        echo -e "${GREEN}✓ Created settings.local.json${NC}"
-    else
-        echo -e "${YELLOW}Warning: Template not found: $template${NC}"
-    fi
+    echo "Generating settings.local.json..."
+    local settings="$claude_dir/settings.local.json"
+    cat > "$settings" <<SETTINGS_EOF
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "AskUserQuestion",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "CLAUDE_SESSION_NAME=$repo_name bash ~/discord-notify.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "EnterPlanMode",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "CLAUDE_SESSION_NAME=$repo_name bash ~/discord-notify.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "ExitPlanMode",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "CLAUDE_SESSION_NAME=$repo_name bash ~/discord-notify.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "CLAUDE_SESSION_NAME=$repo_name bash ~/discord-notify.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "CLAUDE_SESSION_NAME=$repo_name bash ~/discord-notify.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "CLAUDE_SESSION_NAME=$repo_name bash ~/discord-notify.sh"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "TodoWrite",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "CLAUDE_SESSION_NAME=$repo_name bash ~/discord-notify.sh"
+          }
+        ]
+      }
+    ]
+  }
+}
+SETTINGS_EOF
+    chmod 600 "$settings"
+    echo -e "${GREEN}✓ Created settings.local.json${NC}"
 
     echo ""
     echo -e "${GREEN}✓ Repository initialized${NC}"

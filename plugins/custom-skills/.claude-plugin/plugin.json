@@ -1,0 +1,7 @@
+{
+    "name": "custom-skills",
+    "description": "Custom slash commands and model-invoked skills",
+    "author": {
+        "name": "paulliwali"
+    }
+}
