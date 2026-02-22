@@ -74,12 +74,25 @@ echo "Linking .claude/ configuration..."
 # settings.json
 create_symlink "$SCRIPT_DIR/.claude/settings.json" "$HOME/.claude/settings.json"
 
-# All CLAUDE*.md files
-for file in "$SCRIPT_DIR/.claude"/CLAUDE*.md; do
-    if [ -f "$file" ]; then
-        create_symlink "$file" "$HOME/.claude/$(basename "$file")"
+# Global CLAUDE.md only — project-specific rules live in each project's own CLAUDE.md
+create_symlink "$SCRIPT_DIR/.claude/CLAUDE.md" "$HOME/.claude/CLAUDE.md"
+
+# agents directory (custom agent definitions)
+if [ -d "$SCRIPT_DIR/.claude/agents" ]; then
+    if [ -L "$HOME/.claude/agents" ] && [ "$(readlink "$HOME/.claude/agents")" = "$SCRIPT_DIR/.claude/agents" ]; then
+        echo -e "${GREEN}✓ agents (already linked)${NC}"
+    else
+        [ -e "$HOME/.claude/agents" ] && mv "$HOME/.claude/agents" "$HOME/.claude/agents.backup.$(date +%Y%m%d%H%M%S)"
+        ln -s "$SCRIPT_DIR/.claude/agents" "$HOME/.claude/agents"
+        echo -e "${GREEN}✓ agents → $SCRIPT_DIR/.claude/agents${NC}"
     fi
-done
+fi
+
+# memory — project memory symlinked back into repo so it's tracked in git
+ENCODED_PATH=$(echo "$SCRIPT_DIR" | tr '/' '-')
+MEMORY_PROJECT="$HOME/.claude/projects/$ENCODED_PATH"
+mkdir -p "$MEMORY_PROJECT"
+create_symlink "$SCRIPT_DIR/memory" "$MEMORY_PROJECT/memory"
 echo ""
 
 # --- Symlink scripts to ~/ ---
@@ -107,6 +120,39 @@ if [ -d "$SCRIPT_DIR/plugins/custom-skills" ]; then
 fi
 echo ""
 
+# --- Brew tools (modern CLI) ---
+echo "Checking for modern CLI tools..."
+if command -v brew &> /dev/null; then
+    for tool in zoxide eza bat fd; do
+        if ! command -v "$tool" &> /dev/null; then
+            echo "Installing $tool..."
+            brew install "$tool"
+        else
+            echo -e "${GREEN}✓ $tool (already installed)${NC}"
+        fi
+    done
+    if ! fc-list | grep -qi "JetBrainsMono"; then
+        echo "Installing JetBrainsMono Nerd Font..."
+        brew install --cask font-jetbrains-mono-nerd-font
+    else
+        echo -e "${GREEN}✓ JetBrainsMono Nerd Font (already installed)${NC}"
+    fi
+else
+    echo -e "${YELLOW}⚠ brew not found — skipping tool installs${NC}"
+fi
+echo ""
+
+# --- Dotfiles ---
+echo "Linking dotfiles..."
+mkdir -p ~/.config
+create_symlink "$SCRIPT_DIR/dotfiles/zshrc"         "$HOME/.zshrc"
+create_symlink "$SCRIPT_DIR/dotfiles/zprofile"      "$HOME/.zprofile"
+create_symlink "$SCRIPT_DIR/dotfiles/starship.toml" "$HOME/.config/starship.toml"
+mkdir -p "$HOME/Library/Application Support/iTerm2/DynamicProfiles"
+create_symlink "$SCRIPT_DIR/dotfiles/iterm2/Default.json" \
+    "$HOME/Library/Application Support/iTerm2/DynamicProfiles/Default.json"
+echo ""
+
 # --- Done ---
 echo -e "${GREEN}=========================================="
 echo "  Setup Complete!"
@@ -120,15 +166,21 @@ echo ""
 echo -e "2. ${YELLOW}IMPORTANT:${NC} Accept workspace trust when you start Claude Code"
 echo "   - Required for hooks (Discord notifications) to work"
 echo ""
-echo "3. Set up environment variables for Discord integration:"
-echo -e "   ${YELLOW}export DISCORD_BOT_TOKEN=\"your-bot-token\"${NC}"
-echo -e "   ${YELLOW}export DISCORD_WEBHOOK_URL=\"your-webhook-url\"${NC}"
-echo "   (Add these to ~/.bashrc for persistence)"
+echo "3. Create your secrets file from the example template:"
+echo -e "   ${YELLOW}cp $SCRIPT_DIR/dotfiles/secrets.example ~/.secrets${NC}"
+echo "   Then edit ~/.secrets with your actual credentials."
 echo ""
-echo "4. (Optional) Set up multi-session management:"
+echo "4. Set iTerm2 font (one-time):"
+echo "   - Open iTerm2 → Preferences → Profiles → select 'Catppuccin Mocha'"
+echo "   - The profile is auto-loaded from DynamicProfiles"
+echo ""
+echo "5. Set up environment variables for Discord integration:"
+echo -e "   Add to ${YELLOW}~/.secrets${NC}: DISCORD_BOT_TOKEN and DISCORD_WEBHOOK_URL"
+echo ""
+echo "6. (Optional) Set up multi-session management:"
 echo -e "   ${YELLOW}~/claude-session add${NC}  # Add a new repository session"
 echo -e "   ${YELLOW}~/claude-session list${NC}  # List all configured sessions"
 echo ""
-echo "All files are symlinked — edits in ~/.claude/ flow back to the repo."
+echo "All files are symlinked — edits flow back to the repo."
 echo "Commit and push to propagate changes to other instances."
 echo ""

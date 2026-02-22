@@ -5,6 +5,18 @@ This repository contains configuration files for reproducing the AI development 
 
 ## What's Included
 
+### Dotfiles (Shell & Terminal)
+- `dotfiles/zshrc` - Symlinked to `~/.zshrc` — sanitized, no secrets, Catppuccin Mocha aesthetic
+- `dotfiles/zprofile` - Symlinked to `~/.zprofile` — Homebrew PATH setup
+- `dotfiles/starship.toml` - Symlinked to `~/.config/starship.toml` — ultra-minimal prompt
+- `dotfiles/iterm2/Catppuccin-Mocha.itermcolors` - Import once into iTerm2
+- `dotfiles/iterm2/Default.json` - DynamicProfile auto-loaded by iTerm2
+- `dotfiles/secrets.example` - Template for `~/.secrets` (never tracked)
+
+**Credentials pattern**: All secrets live in `~/.secrets` (gitignored).
+`zshrc` sources it with: `[ -f ~/.secrets ] && source ~/.secrets`
+Copy `dotfiles/secrets.example` → `~/.secrets` and fill in real values.
+
 ### Claude Code Configuration Files
 - `settings.local.json` - Claude Code user settings (permissions, output style, hooks)
 - `settings.local.template.json` - Template for per-repo Claude settings

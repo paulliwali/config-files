@@ -1,0 +1,11 @@
+{
+  "Profiles" : [
+    {
+      "Use Separate Colors for Light and Dark Mode" : false,
+      "Name" : "Catppuccin Mocha",
+      "Window Type" : 0,
+      "Guid" : "b3c5e1d2-4f7a-4e89-9c12-3a6b8f0e1d5c",
+      "Rewritable" : true
+    }
+  ]
+}

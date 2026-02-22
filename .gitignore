@@ -7,6 +7,7 @@
 *credentials*
 *secrets*
 *token*
+!dotfiles/secrets.example
 
 # Session-specific data
 projects/

@@ -4,7 +4,15 @@
       "source": "github",
       "repo": "anthropics/claude-plugins-official"
     },
-    "installLocation": "/root/.claude/plugins/marketplaces/claude-plugins-official",
-    "lastUpdated": "2026-01-07T04:25:23.860Z"
+    "installLocation": "/Users/pauldeng/.claude/plugins/marketplaces/claude-plugins-official",
+    "lastUpdated": "2026-02-22T22:16:44.723Z"
+  },
+  "claude-code-lsps": {
+    "source": {
+      "source": "github",
+      "repo": "boostvolt/claude-code-lsps"
+    },
+    "installLocation": "/Users/pauldeng/.claude/plugins/marketplaces/claude-code-lsps",
+    "lastUpdated": "2026-02-11T23:22:44.687Z"
   }
 }

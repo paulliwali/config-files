@@ -46,6 +46,14 @@
       "Bash(go:*)",
       "Bash(source:*)",
       "Bash(bash:*)",
+      "Bash(zsh:*)",
+      "Bash(ln:*)",
+      "Bash(diff:*)",
+      "Bash(brew:*)",
+      "Bash(swift:*)",
+      "Bash(xcrun:*)",
+      "Bash(xcode-select:*)",
+      "Bash(claude:*)",
       "WebSearch"
     ]
   },
