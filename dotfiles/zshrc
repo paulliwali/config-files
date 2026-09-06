@@ -22,6 +22,8 @@ source "$ZSH/oh-my-zsh.sh"
 alias zshconfig="vim ~/.zshrc"
 alias zshsource="source ~/.zshrc"
 
+alias tailscale="/Applications/Tailscale.app/Contents/MacOS/Tailscale"
+
 # git
 alias gst="git status"
 alias glr="git lr"
