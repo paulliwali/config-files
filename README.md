@@ -26,15 +26,9 @@ chmod +x setup.sh
 | `plugins/custom-skills/` | `~/.claude/plugins/custom-skills/` | Custom slash commands & skills |
 | `memory/` | `~/.claude/projects/<encoded-path>/memory/` | Persistent Claude memories (tracked in git) |
 
-### `~/` (Home directory scripts)
-
-| Source | Target | Purpose |
-|--------|--------|---------|
-| `discord-notify.sh` | `~/discord-notify.sh` | Hook script for Discord notifications |
-
 ## Settings Architecture
 
-- **`settings.json`** (global, symlinked) — permissions, hooks, status line, plugins. Hooks call `bash ~/discord-notify.sh` without a session name; the script derives it from `$PWD`.
+- **`settings.json`** (global, symlinked) — permissions, plugins, status line.
 
 ## Custom Skills Plugin
 

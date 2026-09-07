@@ -110,18 +110,6 @@ mkdir -p "$MEMORY_PROJECT"
 create_symlink "$SCRIPT_DIR/memory" "$MEMORY_PROJECT/memory"
 echo ""
 
-# --- Symlink scripts to ~/ ---
-echo "Linking scripts to ~/..."
-
-for script in discord-notify.sh; do
-    if [ -f "$SCRIPT_DIR/$script" ]; then
-        create_symlink "$SCRIPT_DIR/$script" "$HOME/$script"
-    else
-        echo -e "${YELLOW}⚠ $script not found in repo${NC}"
-    fi
-done
-echo ""
-
 # --- Symlink plugin config ---
 echo "Linking plugin configuration..."
 
@@ -189,15 +177,11 @@ echo "4. Set iTerm2 font (one-time):"
 echo "   - Open iTerm2 → Preferences → Profiles → select 'Catppuccin Mocha'"
 echo "   - The profile is auto-loaded from DynamicProfiles"
 echo ""
-echo "5. (Optional) Set up Discord notifications:"
-echo -e "   ${YELLOW}~/discord-notify.sh${NC} uses a hardcoded webhook URL —"
-echo "   edit the script directly if you need to change it"
-echo ""
-echo "6. Authenticate Hermes with your provider:"
+echo "5. Authenticate Hermes with your provider:"
 echo -e "   ${YELLOW}hermes auth add nous${NC}"
 echo "   Then verify with: hermes doctor"
 echo ""
-echo "7. Import a previous Claude Code setup (if any):"
+echo "6. Import a previous Claude Code setup (if any):"
 echo -e "   ${YELLOW}hermes import-agent claude-code${NC}  # memory, allowlist, MCP, skills"
 echo ""
 echo "All files are symlinked — edits flow back to the repo."

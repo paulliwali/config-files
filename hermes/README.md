@@ -20,9 +20,6 @@ flow to the other, and the repo captures them for new installs.
   the global CLAUDE.md prefs (→ MEMORY.md) and the Bash allowlist
   (→ `command_allowlist` in config.yaml)
 - **MCP**: `context7` (npx @upstash/context7-mcp) — declared in config.yaml
-- **Shell hooks**: `pre_tool_call` + `post_tool_call` fire
-  `~/discord-notify.sh` (Discord notifications on terminal/file/clarify/todo
-  activity; `hooks_auto_accept: true`)
 
 ## Machine-local setup (not in this repo)
 

@@ -23,9 +23,6 @@ Copy `dotfiles/secrets.example` → `~/.secrets` and fill in real values.
 - `known_marketplaces.json` - MCP plugin marketplace configuration
 - `setup.sh` - Automated setup script to restore the environment
 
-### Notification Scripts
-- `discord-notify.sh` - Discord webhook integration for real-time notifications
-
 ### Legacy Configuration Files
 - Various conda environment YAML files for data science and ML workflows
 - `.hyper.js` - Hyper terminal configuration
@@ -61,7 +58,7 @@ Copy `dotfiles/secrets.example` → `~/.secrets` and fill in real values.
 
 4. **Accept workspace trust** when starting Claude Code:
    - When you first run Claude Code in your project directory, you'll be prompted to trust the workspace
-   - **You must accept this** for hooks (like Discord notifications) to work
+   - **You must accept this** for hooks to work
    - If you miss the prompt, see "Troubleshooting > Hooks Not Firing" section below
 
 5. Verify the setup:
@@ -120,21 +117,6 @@ Contains user-specific Claude Code settings:
   - `Bash(find:*)` - Allow find commands
   - `Bash(cat:*)` - Allow cat commands
   - `Bash(bash:*)` - Allow bash commands
-- `hooks.PreToolUse` - Commands to run before specific tools execute
-  - Currently configured: Discord notification when AskUserQuestion is called
-  - Requires: `~/discord-notify.sh` script to be present
-
-### discord-notify.sh
-Discord webhook integration that sends notifications when Claude asks questions:
-- **Location**: `~/discord-notify.sh` (copied by setup.sh)
-- **Purpose**: Sends Discord notifications when Claude uses the AskUserQuestion tool
-- **Configuration**: Update `WEBHOOK_URL` with your Discord webhook URL
-- **How it works**:
-  1. Reads hook input from stdin (JSON format)
-  2. Extracts the question text from tool_input
-  3. Sends formatted notification to Discord
-  4. Logs activity to `/tmp/discord-notify.log`
-- **Note**: Requires workspace trust to be accepted in Claude Code
 
 ### known_marketplaces.json
 Configures plugin marketplaces:
@@ -185,40 +167,6 @@ cat ~/.claude/plugins/known_marketplaces.json
 claude plugins refresh
 ```
 
-### Hooks Not Firing
-If hooks (like discord-notify.sh) are not executing:
-
-1. **Check workspace trust** - Hooks require workspace trust to be accepted:
-   ```bash
-   # Check trust status in ~/.claude.json
-   grep hasTrustDialogAccepted ~/.claude.json
-
-   # Should show: "hasTrustDialogAccepted": true
-   ```
-
-2. **Enable workspace trust manually** (if needed):
-   ```bash
-   # Edit ~/.claude.json and set hasTrustDialogAccepted to true
-   # in the project section for your working directory
-   ```
-
-3. **Verify hook script exists and is executable**:
-   ```bash
-   ls -la ~/discord-notify.sh
-   # Should show: -rwxr-xr-x (executable permissions)
-
-   chmod 755 ~/discord-notify.sh  # Fix if needed
-   ```
-
-4. **Check debug logs**:
-   ```bash
-   # View Claude Code debug logs
-   tail -f ~/.claude/debug/latest
-
-   # View hook-specific logs
-   tail -f /tmp/discord-notify.log
-   ```
-
 ## Updating Configuration
 
 After making changes to your Claude Code setup:
@@ -227,14 +175,10 @@ After making changes to your Claude Code setup:
 # Copy updated files back to the repository
 cp ~/.claude/settings.local.json ~/config-files/
 cp ~/.claude/plugins/known_marketplaces.json ~/config-files/
-cp ~/discord-notify.sh ~/config-files/
-
-# IMPORTANT: If discord-notify.sh contains a webhook URL,
-# make sure to remove or anonymize it before committing!
 
 # Commit changes
 cd ~/config-files
-git add settings.local.json known_marketplaces.json discord-notify.sh CLAUDE.md setup.sh
+git add settings.local.json known_marketplaces.json CLAUDE.md setup.sh
 git commit -m "Update Claude Code configuration"
 git push
 ```

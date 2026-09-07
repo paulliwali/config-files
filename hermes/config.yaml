@@ -302,13 +302,3 @@ mcp_servers:
       - -y
       - '@upstash/context7-mcp'
     enabled: true
-hooks:
-  pre_tool_call:
-    - matcher: ^(terminal|write_file|patch|clarify|read_file)$
-      command: bash /Users/pauldeng/discord-notify.sh
-      timeout: 15
-  post_tool_call:
-    - matcher: ^todo_list$
-      command: bash /Users/pauldeng/discord-notify.sh
-      timeout: 15
-hooks_auto_accept: true
