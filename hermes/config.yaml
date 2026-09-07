@@ -151,7 +151,7 @@ updates:
   non_interactive_local_changes: stash
 proxy:
   enabled: true
-_config_version: 34
+_config_version: 41
 session_reset:
   mode: none
   idle_minutes: 1440
@@ -241,3 +241,74 @@ platforms:
       '570604420':
         model: deepseek/deepseek-v4-flash
         provider: nous
+command_allowlist:
+  - bash*
+  - black*
+  - brew*
+  - cargo*
+  - cat*
+  - chmod*
+  - claude*
+  - cp*
+  - curl*
+  - diff*
+  - docker*
+  - docker-compose*
+  - echo*
+  - env
+  - find*
+  - gh*
+  - git*
+  - go*
+  - grep*
+  - head*
+  - isort*
+  - ln*
+  - ls*
+  - make*
+  - mkdir*
+  - mv*
+  - mypy*
+  - node*
+  - npm*
+  - npx*
+  - pip*
+  - pip3*
+  - pnpm*
+  - pwd
+  - pytest*
+  - python*
+  - python3*
+  - rg*
+  - rm*
+  - ruff*
+  - rustc*
+  - source*
+  - swift*
+  - tail*
+  - tmux*
+  - touch*
+  - uv*
+  - wget*
+  - which*
+  - xcode-select*
+  - xcrun*
+  - yarn*
+  - zsh*
+mcp_servers:
+  context7:
+    command: npx
+    args:
+      - -y
+      - '@upstash/context7-mcp'
+    enabled: true
+hooks:
+  pre_tool_call:
+    - matcher: ^(terminal|write_file|patch|clarify|read_file)$
+      command: bash /Users/pauldeng/discord-notify.sh
+      timeout: 15
+  post_tool_call:
+    - matcher: ^todo_list$
+      command: bash /Users/pauldeng/discord-notify.sh
+      timeout: 15
+hooks_auto_accept: true

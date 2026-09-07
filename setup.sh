@@ -33,6 +33,22 @@ else
 fi
 echo ""
 
+# --- Install / update Hermes Agent ---
+echo "Checking for Hermes Agent installation..."
+if command -v hermes &> /dev/null; then
+    echo -e "${GREEN}✓ Hermes Agent found${NC}"
+else
+    echo "Hermes Agent not found. Installing..."
+    curl -fsSL https://hermes-agent.nousresearch.com/install.sh | bash
+    echo -e "${GREEN}✓ Hermes Agent installed${NC}"
+fi
+
+# --- Symlink Hermes config ---
+echo "Linking Hermes configuration..."
+mkdir -p "$HOME/.hermes"
+create_symlink "$SCRIPT_DIR/hermes/config.yaml" "$HOME/.hermes/config.yaml"
+echo ""
+
 # --- Symlink helper ---
 # Usage: create_symlink <source> <target>
 # Handles:
@@ -180,6 +196,13 @@ echo ""
 echo "6. (Optional) Set up multi-session management:"
 echo -e "   ${YELLOW}~/claude-session add${NC}  # Add a new repository session"
 echo -e "   ${YELLOW}~/claude-session list${NC}  # List all configured sessions"
+echo ""
+echo "7. Authenticate Hermes with your provider:"
+echo -e "   ${YELLOW}hermes auth add nous${NC}"
+echo "   Then verify with: hermes doctor"
+echo ""
+echo "8. Import a previous Claude Code setup (if any):"
+echo -e "   ${YELLOW}hermes import-agent claude-code${NC}  # memory, allowlist, MCP, skills"
 echo ""
 echo "All files are symlinked — edits flow back to the repo."
 echo "Commit and push to propagate changes to other instances."
