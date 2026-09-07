@@ -80,7 +80,6 @@ create_symlink() {
 # --- Create directory structure ---
 echo "Creating directory structure..."
 mkdir -p ~/.claude/plugins
-mkdir -p ~/.claude-sessions
 echo -e "${GREEN}✓ Directories ready${NC}"
 echo ""
 
@@ -114,7 +113,7 @@ echo ""
 # --- Symlink scripts to ~/ ---
 echo "Linking scripts to ~/..."
 
-for script in discord-notify.sh discord-bridge.py claude-session get-channel-id.py init-all-sessions.sh; do
+for script in discord-notify.sh; do
     if [ -f "$SCRIPT_DIR/$script" ]; then
         create_symlink "$SCRIPT_DIR/$script" "$HOME/$script"
     else
@@ -190,18 +189,15 @@ echo "4. Set iTerm2 font (one-time):"
 echo "   - Open iTerm2 → Preferences → Profiles → select 'Catppuccin Mocha'"
 echo "   - The profile is auto-loaded from DynamicProfiles"
 echo ""
-echo "5. Set up environment variables for Discord integration:"
-echo -e "   Add to ${YELLOW}~/.secrets${NC}: DISCORD_BOT_TOKEN and DISCORD_WEBHOOK_URL"
+echo "5. (Optional) Set up Discord notifications:"
+echo -e "   ${YELLOW}~/discord-notify.sh${NC} uses a hardcoded webhook URL —"
+echo "   edit the script directly if you need to change it"
 echo ""
-echo "6. (Optional) Set up multi-session management:"
-echo -e "   ${YELLOW}~/claude-session add${NC}  # Add a new repository session"
-echo -e "   ${YELLOW}~/claude-session list${NC}  # List all configured sessions"
-echo ""
-echo "7. Authenticate Hermes with your provider:"
+echo "6. Authenticate Hermes with your provider:"
 echo -e "   ${YELLOW}hermes auth add nous${NC}"
 echo "   Then verify with: hermes doctor"
 echo ""
-echo "8. Import a previous Claude Code setup (if any):"
+echo "7. Import a previous Claude Code setup (if any):"
 echo -e "   ${YELLOW}hermes import-agent claude-code${NC}  # memory, allowlist, MCP, skills"
 echo ""
 echo "All files are symlinked — edits flow back to the repo."
